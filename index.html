@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>單字大挑戰 - 關聯記憶版</title>
+    <title>單字大挑戰 - 關聯記憶與近義反義版</title>
     <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 React & Babel -->
@@ -41,30 +41,31 @@
         };
 
         // --- 完整資料庫 (包含跨單元關聯索引 crossRefs) ---
+        // 註: relationType: 1 為近義, -1 為反義
         const VOCAB_DATA = [
             // Unit 7: Getting Along (30 words)
-            { id: 'u7_1', category: 'Unit 7', word: 'immortal', zh: '永生的;不朽的', type: 'adj', sentence: 'In ancient times some Chinese would drink mercury believing it would make them immortal.' },
+            { id: 'u7_1', category: 'Unit 7', word: 'immortal', zh: '永生的;不朽 of', type: 'adj', sentence: 'In ancient times some Chinese would drink mercury believing it would make them immortal.' },
             { id: 'u7_2', category: 'Unit 7', word: 'pension', zh: '退休金', type: 'n', sentence: 'It’s risky at your age to take a job without a pension.' },
             { id: 'u7_3', category: 'Unit 7', word: 'full-fledged', zh: '充分發展的；成熟的', type: 'adj', sentence: 'Upon graduating you’ll be a full-fledged member of society.' },
-            { id: 'u7_4', category: 'Unit 7', word: 'exaggerate', zh: '誇張;誇大', type: 'v', crossRefs: ['u7_5'], sentence: 'He exaggerated his weekly salary to his new girlfriend.' },
-            { id: 'u7_5', category: 'Unit 7', word: 'understate', zh: '對…輕描淡寫', type: 'v', crossRefs: ['u7_4'], sentence: 'To say he is a controversial leader is the understatement of the year.' },
+            { id: 'u7_4', category: 'Unit 7', word: 'exaggerate', zh: '誇張;誇大', type: 'v', crossRefs: [{id:'u7_5', rel:-1}], sentence: 'He exaggerated his weekly salary to his new girlfriend.' },
+            { id: 'u7_5', category: 'Unit 7', word: 'understate', zh: '對…輕描淡寫', type: 'v', crossRefs: [{id:'u7_4', rel:-1}], sentence: 'To say he is a controversial leader is the understatement of the year.' },
             { id: 'u7_6', category: 'Unit 7', word: 'hit the roof', zh: '勃然大怒', type: 'vp', sentence: 'The teacher accused me of cheating and I just about hit the roof.' },
             { id: 'u7_7', category: 'Unit 7', word: 'cling', zh: '抓緊;堅持', type: 'v', sentence: 'She clung to her father’s beliefs long after they had been disproven.' },
             { id: 'u7_8', category: 'Unit 7', word: 'phase', zh: '階段，時期', type: 'n', sentence: 'The child went through a phase of biting his siblings.' },
             { id: 'u7_9', category: 'Unit 7', word: 'fond (of)', zh: '喜歡', type: 'adj', sentence: 'I am not fond of that class.' },
             { id: 'u7_10', category: 'Unit 7', word: 'temperament', zh: '性情;性格', type: 'n', sentence: 'The president is so temperamental it’s getting in the way of his leadership.' },
-            { id: 'u7_11', category: 'Unit 7', word: 'loaded', zh: '富有;喝醉;子彈上膛', type: 'adj', crossRefs: ['u7_12'], sentence: 'He is loaded; he just bought a new mansion.' },
-            { id: 'u7_12', category: 'Unit 7', word: 'well off', zh: '富有的', type: 'adj', crossRefs: ['u7_11'], sentence: 'His family is quite well off.' },
+            { id: 'u7_11', category: 'Unit 7', word: 'loaded', zh: '富有;喝醉;子彈上膛', type: 'adj', crossRefs: [{id:'u7_12', rel:1}, {id:'t_2', rel:1}], sentence: 'He is loaded; he just bought a new mansion.' },
+            { id: 'u7_12', category: 'Unit 7', word: 'well off', zh: '富有的', type: 'adj', crossRefs: [{id:'u7_11', rel:1}, {id:'t_2', rel:1}], sentence: 'His family is quite well off.' },
             { id: 'u7_13', category: 'Unit 7', word: 'swallow one\'s pride', zh: '放下自尊;認錯', type: 'vp', sentence: 'I had to swallow my pride and admit I was wrong.' },
             { id: 'u7_14', category: 'Unit 7', word: 'shrug', zh: '聳肩(表示不關心)', type: 'v', sentence: 'Don’t shrug your shoulders at me!' },
             { id: 'u7_15', category: 'Unit 7', word: 'get along', zh: '和睦相處', type: 'vp', sentence: 'Do you get along with your new neighbors?' },
-            { id: 'u7_16', category: 'Unit 7', word: 'get over', zh: '克服;恢復', type: 'vp', crossRefs: ['t_35'], sentence: 'It took her a long time to get over the failure.' },
+            { id: 'u7_16', category: 'Unit 7', word: 'get over', zh: '克服;恢復', type: 'vp', crossRefs: [{id:'t_35', rel:1}], sentence: 'It took her a long time to get over the failure.' },
             { id: 'u7_17', category: 'Unit 7', word: 'get on one\'s nerves', zh: '使人心煩', type: 'vp', sentence: 'Stop making that noise. It’s really getting on my nerves.' },
             { id: 'u7_18', category: 'Unit 7', word: 'can’t stand', zh: '無法忍受', type: 'vp', sentence: 'I can’t stand this hot weather any longer.' },
             { id: 'u7_19', category: 'Unit 7', word: 'fed up (with)', zh: '受夠了', type: 'adj', sentence: 'I’m fed up with his constant complaining.' },
             { id: 'u7_20', category: 'Unit 7', word: 'blame', zh: '責怪', type: 'v', sentence: 'The woman blamed me for the car accident.' },
             { id: 'u7_21', category: 'Unit 7', word: 'scold', zh: '責罵', type: 'v', sentence: 'She scolded me for not doing my homework.' },
-            { id: 'u7_22', category: 'Unit 7', word: 'obligation', zh: '義務；責任', type: 'n', crossRefs: ['t_9'], sentence: 'Parents have an obligation to feed and clothe their children.' },
+            { id: 'u7_22', category: 'Unit 7', word: 'obligation', zh: '義務；責任', type: 'n', crossRefs: [{id:'t_9', rel:1}], sentence: 'Parents have an obligation to feed and clothe their children.' },
             { id: 'u7_23', category: 'Unit 7', word: 'chilly', zh: '寒冷的', type: 'adj', sentence: 'It\'s a bit chilly outside; you should wear a coat.' },
             { id: 'u7_24', category: 'Unit 7', word: 'worship', zh: '崇拜;祭拜', type: 'v', sentence: 'Do people worship their ancestors in your country?' },
             { id: 'u7_25', category: 'Unit 7', word: 'complain', zh: '抱怨', type: 'v', sentence: 'Students love to complain about the food in the cafeteria.' },
@@ -85,12 +86,12 @@
             { id: 'u8_8', category: 'Unit 8', word: 'pedestrian', zh: '行人', type: 'n', sentence: 'Pedestrians should always have the right of way.' },
             { id: 'u8_9', category: 'Unit 8', word: 'predict', zh: '預測', type: 'v', sentence: 'He predicted the result of the ballgame.' },
             { id: 'u8_10', category: 'Unit 8', word: 'profusely', zh: '大量地;豐富地', type: 'adv', sentence: 'He was sweating profusely after the run.' },
-            { id: 'u8_11', category: 'Unit 8', word: 'pretentious', zh: '自命不凡的;做作的', type: 'adj', sentence: 'His explanations seem more pretentious than helpful.' },
-            { id: 'u8_12', category: 'Unit 8', word: 'arrogant', zh: '傲慢的;狂妄的', type: 'adj', crossRefs: ['u8_13'], sentence: 'What an arrogant jerk he is.' },
-            { id: 'u8_13', category: 'Unit 8', word: 'conceited', zh: '自負的;自以為是的', type: 'adj', crossRefs: ['u8_12'], sentence: 'Ever since winning, she’s been acting so conceited.' },
+            { id: 'u8_11', category: 'Unit 8', word: 'pretentious', zh: '自命不凡的;做作的', type: 'adj', crossRefs: [{id:'u8_12', rel:1}, {id:'u8_13', rel:1}], sentence: 'His explanations seem more pretentious than helpful.' },
+            { id: 'u8_12', category: 'Unit 8', word: 'arrogant', zh: '傲慢的;狂妄的', type: 'adj', crossRefs: [{id:'u8_13', rel:1}, {id:'u8_11', rel:1}], sentence: 'What an arrogant jerk he is.' },
+            { id: 'u8_13', category: 'Unit 8', word: 'conceited', zh: '自負的;自以為是的', type: 'adj', crossRefs: [{id:'u8_12', rel:1}, {id:'u8_11', rel:1}], sentence: 'Ever since winning, she’s been acting so conceited.' },
             { id: 'u8_14', category: 'Unit 8', word: 'plump', zh: '豐滿的', type: 'adj', sentence: 'Santa Claus is often called plump.' },
             { id: 'u8_15', category: 'Unit 8', word: 'solitude', zh: '獨處;獨自', type: 'n', sentence: 'I need solitude each week to recharge.' },
-            { id: 'u8_16', category: 'Unit 8', word: 'gorgeous', zh: '極其漂亮的', type: 'adj', crossRefs: ['u8_36'], sentence: 'The gorgeous woman drew looks from all across the room.' },
+            { id: 'u8_16', category: 'Unit 8', word: 'gorgeous', zh: '極其漂亮的', type: 'adj', crossRefs: [{id:'u8_36', rel:1}], sentence: 'The gorgeous woman drew looks from all across the room.' },
             { id: 'u8_17', category: 'Unit 8', word: 'refund', zh: '退款', type: 'n/v', sentence: 'I’m getting a refund because the keyboard doesn’t work.' },
             { id: 'u8_18', category: 'Unit 8', word: 'ridiculous', zh: '荒謬的;可笑的', type: 'adj', sentence: 'That student’s test answers were ridiculous!' },
             { id: 'u8_19', category: 'Unit 8', word: 'camouflage', zh: '隱蔽;偽裝', type: 'n/v', sentence: 'The soldier wasn’t camouflaged well enough.' },
@@ -100,28 +101,28 @@
             { id: 'u8_23', category: 'Unit 8', word: 'documentary', zh: '紀錄片', type: 'n', sentence: 'I prefer documentaries to dramas.' },
             { id: 'u8_24', category: 'Unit 8', word: 'graffiti', zh: '塗鴉', type: 'n', sentence: 'There is a lot of graffiti on the subway walls.' },
             { id: 'u8_25', category: 'Unit 8', word: 'hectic', zh: '忙碌的', type: 'adj', sentence: 'The first year of teaching is the most hectic time.' },
-            { id: 'u8_26', category: 'Unit 8', word: 'landscape', zh: '景觀;景色', type: 'n', crossRefs: ['u8_27', 'u8_28'], sentence: 'The landscape of Yilan is very different from Taipei.' },
-            { id: 'u8_27', category: 'Unit 8', word: 'view', zh: '景象;視野', type: 'n', crossRefs: ['u8_26', 'u8_28'], sentence: 'The mountains offer a stunning view of the city.' },
-            { id: 'u8_28', category: 'Unit 8', word: 'scenery', zh: '風景', type: 'n', crossRefs: ['u8_26', 'u8_27'], sentence: 'I prefer holidays to places with natural scenery.' },
+            { id: 'u8_26', category: 'Unit 8', word: 'landscape', zh: '景觀;景色', type: 'n', crossRefs: [{id:'u8_27', rel:1}, {id:'u8_28', rel:1}], sentence: 'The landscape of Yilan is very different from Taipei.' },
+            { id: 'u8_27', category: 'Unit 8', word: 'view', zh: '景象;視野', type: 'n', crossRefs: [{id:'u8_26', rel:1}, {id:'u8_28', rel:1}], sentence: 'The mountains offer a stunning view of the city.' },
+            { id: 'u8_28', category: 'Unit 8', word: 'scenery', zh: '風景', type: 'n', crossRefs: [{id:'u8_26', rel:1}, {id:'u8_27', rel:1}], sentence: 'I prefer holidays to places with natural scenery.' },
             { id: 'u8_29', category: 'Unit 8', word: 'situate', zh: '使坐落於', type: 'v', sentence: 'My computer is situated next to the TV.' },
-            { id: 'u8_30', category: 'Unit 8', word: 'touched', zh: '受感動的', type: 'adj', crossRefs: ['u8_31'], sentence: 'I was really touched by your kind words.' },
-            { id: 'u8_31', category: 'Unit 8', word: 'touching', zh: '感人的', type: 'adj', crossRefs: ['u8_30'], sentence: 'What a touching movie! I almost cried.' },
+            { id: 'u8_30', category: 'Unit 8', word: 'touched', zh: '受感動的', type: 'adj', crossRefs: [{id:'u8_31', rel:1}], sentence: 'I was really touched by your kind words.' },
+            { id: 'u8_31', category: 'Unit 8', word: 'touching', zh: '感人的', type: 'adj', crossRefs: [{id:'u8_30', rel:1}], sentence: 'What a touching movie! I almost cried.' },
             { id: 'u8_32', category: 'Unit 8', word: 'ambitious', zh: '雄心勃勃的', type: 'adj', sentence: 'An ambitious student shouldn’t expect an easy path.' },
             { id: 'u8_33', category: 'Unit 8', word: 'mourn', zh: '哀悼', type: 'v', sentence: 'It took ten years to finish mourning after my father passed.' },
             { id: 'u8_34', category: 'Unit 8', word: 'no laughing matter', zh: '不是鬧著玩的', type: 'vp', sentence: 'Failing a course is no laughing matter.' },
             { id: 'u8_35', category: 'Unit 8', word: 'absolutely', zh: '完全地;絕對地', type: 'adv', sentence: 'I absolutely want to visit America this summer.' },
-            { id: 'u8_36', category: 'Unit 8', word: 'spectacular', zh: '壯觀的;驚人的', type: 'adj', crossRefs: ['u8_16'], sentence: 'The scenic landscape in Yilan is spectacular.' },
+            { id: 'u8_36', category: 'Unit 8', word: 'spectacular', zh: '壯觀的;驚人的', type: 'adj', crossRefs: [{id:'u8_16', rel:1}], sentence: 'The scenic landscape in Yilan is spectacular.' },
 
             // TOEIC Group 1-4 (40 words)
             { id: 't_1', category: 'TOEIC', word: 'overdue', zh: '過期的;早該發生的', type: 'adj', sentence: 'A change in policy is long overdue.' },
-            { id: 't_2', category: 'TOEIC', word: 'revenue', zh: '收入;稅收', type: 'n', crossRefs: ['u7_11', 'u7_12'], sentence: 'The company needs to boost its annual revenue.' },
+            { id: 't_2', category: 'TOEIC', word: 'revenue', zh: '收入;稅收', type: 'n', crossRefs: [{id:'u7_11', rel:1}, {id:'u7_12', rel:1}], sentence: 'The company needs to boost its annual revenue.' },
             { id: 't_3', category: 'TOEIC', word: 'duplicate', zh: '副本;複製', type: 'n/v', sentence: 'Please make a duplicate of the key.' },
             { id: 't_4', category: 'TOEIC', word: 'domestic', zh: '國內的;家庭的', type: 'adj', sentence: 'Domestic flights depart from Terminal 1.' },
             { id: 't_5', category: 'TOEIC', word: 'memorandum', zh: '備忘錄', type: 'n', sentence: 'The manager issued a memorandum regarding the new rules.' },
             { id: 't_6', category: 'TOEIC', word: 'suspend', zh: '終止;暫停', type: 'v', sentence: 'The project was suspended due to lack of funds.' },
             { id: 't_7', category: 'TOEIC', word: 'prospective', zh: '預期的;潛在的', type: 'adj', sentence: 'We are meeting with prospective clients today.' },
             { id: 't_8', category: 'TOEIC', word: 'keynote', zh: '主旨;基調', type: 'n', sentence: 'He will deliver the keynote address at the conference.' },
-            { id: 't_9', category: 'TOEIC', word: 'commitment', zh: '承諾;奉獻', type: 'n', crossRefs: ['u7_22'], sentence: 'The team showed great commitment to the project.' },
+            { id: 't_9', category: 'TOEIC', word: 'commitment', zh: '承諾;奉獻', type: 'n', crossRefs: [{id:'u7_22', rel:1}], sentence: 'The team showed great commitment to the project.' },
             { id: 't_10', category: 'TOEIC', word: 'merge', zh: '合併;同化', type: 'v', sentence: 'The two companies plan to merge next year.' },
             { id: 't_11', category: 'TOEIC', word: 'facility', zh: '設施', type: 'n', sentence: 'The research facility is located downtown.' },
             { id: 't_12', category: 'TOEIC', word: 'qualification', zh: '資格;限制', type: 'n', sentence: 'What are the qualifications for this job?' },
@@ -147,7 +148,7 @@
             { id: 't_32', category: 'TOEIC', word: 'eligible', zh: '符合資格的', type: 'adj', sentence: 'Are you eligible to vote?' },
             { id: 't_33', category: 'TOEIC', word: 'pledge', zh: '發誓;誓言', type: 'n/v', sentence: 'They made a pledge to help each other.' },
             { id: 't_34', category: 'TOEIC', word: 'faculty', zh: '全體人員(教職員)', type: 'n', sentence: 'The faculty is dedicated to student success.' },
-            { id: 't_35', category: 'TOEIC', word: 'resolve', zh: '解決;決心', type: 'v', crossRefs: ['u7_16'], sentence: 'We must resolve this issue immediately.' },
+            { id: 't_35', category: 'TOEIC', word: 'resolve', zh: '解決;決心', type: 'v', crossRefs: [{id:'u7_16', rel:1}], sentence: 'We must resolve this issue immediately.' },
             { id: 't_36', category: 'TOEIC', word: 'interpret', zh: '翻譯;詮釋', type: 'v', sentence: 'How do you interpret his silence?' },
             { id: 't_37', category: 'TOEIC', word: 'precaution', zh: '預防措施', type: 'n', sentence: 'Take every precaution to avoid mistakes.' },
             { id: 't_38', category: 'TOEIC', word: 'freight', zh: '貨物;運輸', type: 'n/v', sentence: 'The goods were sent by sea freight.' },
@@ -169,21 +170,50 @@
             const [reviewCategory, setReviewCategory] = useState('Unit 7');
             const [searchTerm, setSearchTerm] = useState('');
 
+            // 輔助函式：透過 ID 找到單字完整資訊
+            const getVocabById = (id) => VOCAB_DATA.find(v => v.id === id);
+
             const generateQuiz = (mode, pool = VOCAB_DATA) => {
                 let filteredPool = pool;
+                
+                // 專屬模式二：近義反義詞出題邏輯
                 if (mode === 'syn-ant') {
                     filteredPool = pool.filter(v => v.crossRefs && v.crossRefs.length > 0);
                 }
+
                 if (filteredPool.length === 0) return;
 
                 const shuffled = [...filteredPool].sort(() => 0.5 - Math.random());
+                // 如果是近義反義模式，我們特別構造題目
                 const selected = shuffled.slice(0, 10).map(v => {
-                    const distractors = pool
-                        .filter(d => d.id !== v.id)
-                        .sort(() => 0.5 - Math.random())
-                        .slice(0, 3);
-                    const options = [...distractors, v].sort(() => 0.5 - Math.random());
-                    return { ...v, options };
+                    if (mode === 'syn-ant') {
+                        // 隨機選一個關聯詞作為正確答案
+                        const randomRef = v.crossRefs[Math.floor(Math.random() * v.crossRefs.length)];
+                        const correctWordObj = getVocabById(randomRef.id);
+                        
+                        // 混淆項
+                        const distractors = pool
+                            .filter(d => d.id !== v.id && !v.crossRefs.some(ref => ref.id === d.id))
+                            .sort(() => 0.5 - Math.random())
+                            .slice(0, 3);
+                        
+                        const options = [...distractors, correctWordObj].sort(() => 0.5 - Math.random());
+                        
+                        return { 
+                            ...v, 
+                            options, 
+                            targetRef: randomRef, // 記錄是近義還是反義
+                            correctId: correctWordObj.id 
+                        };
+                    } else {
+                        // 一般模式 (中文選英文 / 句子填空)
+                        const distractors = pool
+                            .filter(d => d.id !== v.id)
+                            .sort(() => 0.5 - Math.random())
+                            .slice(0, 3);
+                        const options = [...distractors, v].sort(() => 0.5 - Math.random());
+                        return { ...v, options, correctId: v.id };
+                    }
                 });
                 
                 setQuestions(selected);
@@ -199,7 +229,8 @@
                 if (showExplanation) return;
                 setSelectedAnswer(optionId);
                 setShowExplanation(true);
-                const isCorrect = optionId === questions[currentIndex].id;
+                
+                const isCorrect = optionId === questions[currentIndex].correctId;
                 if (isCorrect) {
                     setScore(s => s + 1);
                 } else {
@@ -226,9 +257,7 @@
                 );
             };
 
-            // 輔助函式：透過 ID 找到單字完整資訊
-            const getVocabById = (id) => VOCAB_DATA.find(v => v.id === id);
-
+            // 視圖：主選單
             if (view === 'menu') {
                 return (
                     <div className="min-h-screen bg-slate-50 p-6 md:p-10">
@@ -251,8 +280,8 @@
                                 <button onClick={() => generateQuiz('syn-ant')} className="flex items-center gap-5 p-6 bg-white border-2 border-purple-200 rounded-3xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                                     <div className="p-4 bg-purple-50 text-purple-600 rounded-2xl"><Icon name="rotate-ccw" /></div>
                                     <div className="text-left">
-                                        <h3 className="font-black text-slate-800 text-lg">模式二：近義/反義詞</h3>
-                                        <p className="text-slate-500 text-sm">掌握詞彙之間的深層關聯</p>
+                                        <h3 className="font-black text-slate-800 text-lg">模式二：近義 / 反義詞挑戰</h3>
+                                        <p className="text-slate-500 text-sm">強化單字間的邏輯聯想</p>
                                     </div>
                                     <Icon name="chevron-right" className="ml-auto text-slate-300" />
                                 </button>
@@ -270,7 +299,7 @@
                                     <div className="p-4 bg-orange-100 text-orange-600 rounded-2xl"><Icon name="layers" /></div>
                                     <div className="text-left">
                                         <h3 className="font-black text-orange-800 text-lg">模式四：單字複習卡</h3>
-                                        <p className="text-orange-600 text-sm">系統化複習所有單字</p>
+                                        <p className="text-orange-600 text-sm">查看關聯與詳細例句</p>
                                     </div>
                                     <Icon name="chevron-right" className="ml-auto text-orange-300" />
                                 </button>
@@ -297,6 +326,7 @@
                 );
             }
 
+            // 視圖：複習卡
             if (view === 'review_all') {
                 const filteredVocab = VOCAB_DATA.filter(v => 
                     v.category === reviewCategory && 
@@ -357,16 +387,14 @@
                                             <span className="font-bold text-slate-400 shrink-0">例句:</span>
                                             <span className="text-slate-600 italic leading-relaxed">{v.sentence}</span>
                                         </div>
-                                        
-                                        {/* 新增關聯單字顯示區塊 */}
                                         {v.crossRefs && v.crossRefs.length > 0 && (
                                             <div className="mt-4 pt-3 border-t border-slate-200">
                                                 <p className="text-xs font-bold text-slate-400 mb-2">本系統內相關單字：</p>
                                                 <div className="space-y-1">
-                                                    {v.crossRefs.map(refId => {
-                                                        const refWord = getVocabById(refId);
+                                                    {v.crossRefs.map(ref => {
+                                                        const refWord = getVocabById(ref.id);
                                                         return refWord ? (
-                                                            <div key={refId} className="text-sm text-slate-700">
+                                                            <div key={ref.id} className="text-sm text-slate-700">
                                                                 * {refWord.word} {refWord.zh} ({refWord.category})
                                                             </div>
                                                         ) : null;
@@ -382,9 +410,11 @@
                 );
             }
 
+            // 視圖：測驗中
             if (view === 'quiz') {
                 const q = questions[currentIndex];
                 const isStarred = starredIds.includes(q.id);
+                
                 return (
                     <div className="min-h-screen bg-white p-6 flex flex-col items-center">
                         <div className="w-full max-w-xl">
@@ -399,38 +429,78 @@
                                     <Icon name="star" fill={isStarred ? "currentColor" : "none"} />
                                 </button>
                             </div>
+                            
                             <div className="text-center mb-10">
                                 <span className="text-xs font-black text-slate-300 tracking-widest uppercase">Question {currentIndex + 1} / {questions.length}</span>
-                                <div className="mt-4 min-h-[140px] flex items-center justify-center bg-slate-50 rounded-[40px] p-8">
+                                <div className="mt-4 min-h-[140px] flex flex-col items-center justify-center bg-slate-50 rounded-[40px] p-8">
                                     {quizMode === 'zh-en' && <h2 className="text-3xl font-black text-slate-800">{q.zh}</h2>}
-                                    {quizMode === 'syn-ant' && <h2 className="text-4xl font-black text-slate-900">{q.word}</h2>}
-                                    {quizMode === 'sentence' && <p className="text-xl font-medium text-slate-700 italic">"{q.sentence.replace(new RegExp(q.word, 'gi'), '______')}"</p>}
+                                    {quizMode === 'syn-ant' && (
+                                        <>
+                                            <p className={`text-sm font-bold mb-2 ${q.targetRef.rel === 1 ? 'text-blue-500' : 'text-purple-500'}`}>
+                                                請選出此單字的「{q.targetRef.rel === 1 ? '近義詞' : '反義詞'}」：
+                                            </p>
+                                            <h2 className="text-4xl font-black text-slate-900">{q.word}</h2>
+                                        </>
+                                    )}
+                                    {quizMode === 'sentence' && (
+                                        <p className="text-xl font-medium text-slate-700 italic leading-relaxed">
+                                            "{q.sentence.replace(new RegExp(q.word.replace('(of)', '').trim(), 'gi'), '______')}"
+                                        </p>
+                                    )}
                                 </div>
                             </div>
+
                             <div className="grid gap-3">
-                                {q.options.map((opt) => (
-                                    <button 
-                                        key={opt.id} 
-                                        onClick={() => handleAnswer(opt.id)} 
-                                        disabled={showExplanation}
-                                        className={`w-full p-5 text-left border-2 rounded-2xl transition-all duration-300 flex justify-between items-center ${
-                                            showExplanation 
-                                            ? (opt.id === q.id ? "border-emerald-500 bg-emerald-50 text-emerald-700" : (selectedAnswer === opt.id ? "border-rose-500 bg-rose-50 text-rose-700" : "opacity-40"))
-                                            : "border-slate-100 hover:border-slate-900 hover:bg-slate-900 hover:text-white"
-                                        }`}
-                                    >
-                                        <span className="text-lg font-bold">{opt.word}</span>
-                                        {showExplanation && opt.id === q.id && <Icon name="check-circle-2" size={20} />}
-                                        {showExplanation && selectedAnswer === opt.id && opt.id !== q.id && <Icon name="x-circle" size={20} />}
-                                    </button>
-                                ))}
+                                {q.options.map((opt) => {
+                                    const isCorrect = opt.id === q.correctId;
+                                    const isSelected = selectedAnswer === opt.id;
+                                    let style = "w-full p-5 text-left border-2 rounded-2xl transition-all duration-300 flex justify-between items-center shadow-sm ";
+                                    
+                                    if (showExplanation) {
+                                        if (isCorrect) style += "border-emerald-500 bg-emerald-50 text-emerald-700 shadow-emerald-100";
+                                        else if (isSelected) style += "border-rose-500 bg-rose-50 text-rose-700 shadow-rose-100";
+                                        else style += "opacity-40 border-slate-100";
+                                    } else {
+                                        style += "border-slate-100 hover:border-slate-900 hover:bg-slate-900 hover:text-white";
+                                    }
+
+                                    return (
+                                        <button key={opt.id} onClick={() => handleAnswer(opt.id)} disabled={showExplanation} className={style}>
+                                            <div className="flex flex-col">
+                                                <span className="text-lg font-bold">{opt.word}</span>
+                                                {showExplanation && <span className="text-xs opacity-70">{opt.zh}</span>}
+                                            </div>
+                                            {showExplanation && isCorrect && <Icon name="check-circle-2" size={20} />}
+                                            {showExplanation && isSelected && !isCorrect && <Icon name="x-circle" size={20} />}
+                                        </button>
+                                    );
+                                })}
                             </div>
+
                             {showExplanation && (
                                 <div className="mt-10 p-8 bg-slate-900 text-white rounded-[40px] animate-bounce-short">
-                                    <div className="text-2xl font-black mb-2">{q.word}</div>
-                                    <div className="text-blue-400 font-bold mb-4">{q.zh}</div>
-                                    <p className="text-slate-400 text-sm italic">"{q.sentence}"</p>
-                                    <button onClick={nextQuestion} className="w-full mt-8 py-4 bg-white text-slate-900 font-black rounded-2xl">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <Icon name="info" size={20} className="text-blue-400" />
+                                        <h4 className="font-black text-lg">解析</h4>
+                                    </div>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <div className="text-2xl font-black">{q.word}</div>
+                                            <div className="text-blue-400 font-bold">{q.zh}</div>
+                                        </div>
+                                        {quizMode === 'syn-ant' && (
+                                            <div className="p-3 bg-white/10 rounded-xl border border-white/20">
+                                                <p className="text-sm font-bold text-blue-200">
+                                                    正確答案：{getVocabById(q.correctId).word}
+                                                </p>
+                                                <p className="text-xs text-slate-300 mt-1">
+                                                    兩者關係：{q.targetRef.rel === 1 ? '意思相近' : '意思相反'}
+                                                </p>
+                                            </div>
+                                        )}
+                                        <p className="text-slate-400 text-sm italic leading-relaxed">"{q.sentence}"</p>
+                                    </div>
+                                    <button onClick={nextQuestion} className="w-full mt-8 py-4 bg-white text-slate-900 font-black rounded-2xl hover:bg-blue-50 transition-colors">
                                         {currentIndex === questions.length - 1 ? "看總結" : "下一題"}
                                     </button>
                                 </div>
@@ -440,6 +510,7 @@
                 );
             }
 
+            // 視圖：結果
             if (view === 'result') {
                 return (
                     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
